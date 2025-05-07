@@ -1,0 +1,84 @@
+// Definition for singly-linked list.
+// #[derive(PartialEq, Eq, Clone, Debug)]
+// pub struct ListNode {
+//   pub val: i32,
+//   pub next: Option<Box<ListNode>>
+// }
+// 
+// impl ListNode {
+//   #[inline]
+//   fn new(val: i32) -> Self {
+//     ListNode {
+//       next: None,
+//       val
+//     }
+//   }
+// }
+impl Solution {
+    pub fn merge_two_lists(list1: Option<Box<ListNode>>, list2: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        
+        //both lists are already sorted
+        let mut merged_list: Option<Box<ListNode>> = None;
+
+        //set pointer to list1
+        let mut list1_ptr: &Option<Box<ListNode>> = &list1;
+        //set pointer to list2
+        let mut list2_ptr: &Option<Box<ListNode>> = &list2;
+        //set pointer to merged_list
+        let mut ptr_merged_list: &mut Option<Box<ListNode>> = &mut merged_list;
+
+
+        //if pointers have reached end of list, stop iterating
+        while list1_ptr.is_some() || list2_ptr.is_some(){
+            //allocate new space on merged_list
+            *ptr_merged_list = Some(Box::new(ListNode::new(0)));
+
+            //check if one is empty and other isn't 
+            match list1_ptr {
+                Some(node) => {
+                    //if list1 has value while list2 has no value
+                    if list2_ptr.is_none() {
+                        //then add value of list1 to merged_list
+                        ptr_merged_list.as_mut().unwrap().val = node.val; 
+                        ptr_merged_list = &mut ptr_merged_list.as_mut().unwrap().next;
+
+                        //advance list1 and merged_list by 1
+                        list1_ptr = &(node.next);
+
+                    } else {
+                        //they both have values
+                        //if both have values then we need to check which is larger
+                        if node.val <= list2_ptr.as_ref().unwrap().val {
+                            ptr_merged_list.as_mut().unwrap().val = node.val; 
+                            ptr_merged_list = &mut ptr_merged_list.as_mut().unwrap().next;
+                            list1_ptr = &(node.next);
+                        } else {
+                            ptr_merged_list.as_mut().unwrap().val = list2_ptr.as_ref().unwrap().val;
+                            ptr_merged_list = &mut ptr_merged_list.as_mut().unwrap().next;
+                            list2_ptr = &(list2_ptr.as_ref().unwrap().next);
+                        }
+
+                    }
+                },
+                None => {
+                    //if list1 is empty, but list 2 isn't...
+                    if list2_ptr.is_some() {
+                        //...then we insert list2
+                        //advance list2 by 1
+                        ptr_merged_list.as_mut().unwrap().val = list2_ptr.as_ref().unwrap().val;
+                        ptr_merged_list = &mut ptr_merged_list.as_mut().unwrap().next;
+                        list2_ptr = &(list2_ptr.as_ref().unwrap().next);
+                    }
+                }
+            } //end of match
+        
+        } //end of while loop
+
+        
+        
+
+        return merged_list
+    }
+
+
+}
